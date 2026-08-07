@@ -67,8 +67,7 @@ Hình thức: **cá nhân** (1 người / 1 MSSV). Luồng: **Setup → A → Br
 | # | Phần | Nội dung | Thời lượng |
 |---|------|----------|-----------:|
 | 0 | **Setup** | Cài đặt môi trường (`pip`, `GOOGLE_API_KEY`, chạy local) | 30' |
-| 1 | **A · Phòng thủ** | 2A Input · 2B Output · 2C NeMo · Part 3 Testing · Part 4 HITL | 120' |
-| — | **Break** | Nghỉ giải lao | 10' |
+| 1 | **A · Phòng thủ** | 2A Input · 2B Output · 2C
 | 2 | **B · Tấn công** | Tấn công **Unsafe** (điểm B) + **Guards** (điểm cộng nếu LEAKED) | 60' |
 | — | **Break** | Nghỉ giải lao | 10' |
 | 3 | **Demo** | Demo cá nhân · attack prompting (cuối buổi) | 45' |

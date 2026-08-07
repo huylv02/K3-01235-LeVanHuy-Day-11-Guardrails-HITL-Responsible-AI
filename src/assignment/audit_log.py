@@ -7,7 +7,9 @@ other layers catch attacks; this layer makes them reviewable.
 from __future__ import annotations
 
 import json
+import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 
 class AuditLogPlugin:
@@ -20,7 +22,13 @@ class AuditLogPlugin:
 
     def record_input(self, *, user_id: str, text: str, request_id: str | None = None):
         """TODO: store input + start timestamp keyed by request_id/user_id."""
-        raise NotImplementedError("Implement AuditLogPlugin.record_input")
+        self._open[request_id] = {"start_time": time.time()}
+        self.logs.append({
+            "request_id": request_id,
+            "user_id": user_id,
+            "input": text,
+            "timestamp": utc_now_iso(),
+        })
 
     def record_output(
         self,
@@ -32,12 +40,26 @@ class AuditLogPlugin:
         request_id: str | None = None,
     ):
         """TODO: store output, layer decision, latency; append to self.logs."""
-        raise NotImplementedError("Implement AuditLogPlugin.record_output")
+        # Find the entry in logs
+        for log in self.logs:
+            if log.get("request_id") == request_id:
+                start_time = self._open.get(request_id, {}).get("start_time", time.time())
+                latency = time.time() - start_time
+                log.update({
+                    "output": text,
+                    "blocked": blocked,
+                    "layer": layer,
+                    "latency": latency
+                })
+                break
 
     def export_json(self, filepath: str = "outputs/audit_log.json"):
         """Write logs to disk (JSON array)."""
         # TODO: ensure parent dirs exist, dump self.logs with indent=2
-        raise NotImplementedError("Implement AuditLogPlugin.export_json")
+        path = Path(filepath)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8") as f:
+            json.dump(self.logs, f, indent=2)
 
 
 def utc_now_iso() -> str:
